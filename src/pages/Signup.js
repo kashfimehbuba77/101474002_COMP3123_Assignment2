@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axiosClient";
 
 export default function Signup() {
@@ -10,6 +10,7 @@ export default function Signup() {
   });
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,19 +23,21 @@ export default function Signup() {
 
     try {
       const res = await api.post("/user/signup", form);
-      setMsg("✨ Account created successfully!");
+      setMsg("🌸 Account created successfully!");
+      setTimeout(() => navigate("/login"), 1200);
     } catch (err) {
-      setMsg("❌ " + (err.response?.data?.message || "Something went wrong"));
+      setMsg("❌ Something went wrong. Try again.");
     }
+
     setLoading(false);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-pink-50">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border border-pink-100">
-        
+
         <h1 className="text-3xl font-bold text-pink-600 mb-6 text-center">
-          Create Account 
+          Create Account 🌸
         </h1>
 
         {msg && (
@@ -44,10 +47,10 @@ export default function Signup() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-pink-600 font-medium mb-1">
-              Username
-            </label>
+
+          {/* Username */}
+          <div className="flex flex-col">
+            <label className="text-pink-600 font-medium mb-1">Username</label>
             <input
               type="text"
               name="username"
@@ -58,10 +61,9 @@ export default function Signup() {
             />
           </div>
 
-          <div>
-            <label className="block text-pink-600 font-medium mb-1">
-              Email
-            </label>
+          {/* Email */}
+          <div className="flex flex-col">
+            <label className="text-pink-600 font-medium mb-1">Email</label>
             <input
               type="email"
               name="email"
@@ -72,10 +74,9 @@ export default function Signup() {
             />
           </div>
 
-          <div>
-            <label className="block text-pink-600 font-medium mb-1">
-              Password
-            </label>
+          {/* Password */}
+          <div className="flex flex-col">
+            <label className="text-pink-600 font-medium mb-1">Password</label>
             <input
               type="password"
               name="password"
@@ -101,6 +102,7 @@ export default function Signup() {
             Login
           </Link>
         </p>
+
       </div>
     </div>
   );

@@ -1,11 +1,13 @@
-.App {
-  text-align: center;
-}
-
 body {
   background: linear-gradient(to bottom right, #ffe6f2, #ffd4ea);
   min-height: 100vh;
 }
+
+.App {
+  text-align: center;
+}
+
+
 
 .App-logo {
   height: 40vmin;
