@@ -1,75 +1,107 @@
-// src/pages/Signup.js
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import api from "../api/axiosClient";
 
-const Signup = () => {
+export default function Signup() {
   const [form, setForm] = useState({
     username: "",
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [msg, setMsg] = useState("");
 
-  const onChange = (e) =>
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
+    setMsg("");
+
     try {
-      await api.post("/user/signup", form);
-      navigate("/login");
+      const res = await api.post("/user/signup", form);
+      setMsg("✨ Account created successfully!");
     } catch (err) {
-      console.error(err);
-      setError(
-        err.response?.data?.message || "Signup failed. Please try again."
-      );
-    } finally {
-      setLoading(false);
+      setMsg("❌ " + (err.response?.data?.message || "Something went wrong"));
     }
+    setLoading(false);
   };
 
   return (
-    <div className="auth-container">
-      <h2>Signup</h2>
-      <form onSubmit={onSubmit} className="auth-form">
-        <input
-          name="username"
-          placeholder="Username"
-          value={form.username}
-          onChange={onChange}
-          required
-        />
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={onChange}
-          required
-        />
-        <input
-          name="password"
-          type="password"
-          placeholder="Password (min 6 chars)"
-          value={form.password}
-          onChange={onChange}
-          required
-        />
-        {error && <p className="error-text">{error}</p>}
-        <button type="submit" disabled={loading}>
-          {loading ? "Creating..." : "Sign up"}
-        </button>
-      </form>
-      <p style={{ marginTop: 8 }}>
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
+    <div className="min-h-screen flex items-center justify-center bg-pink-50">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border border-pink-100">
+        
+        <h1 className="text-3xl font-bold text-pink-600 mb-6 text-center">
+          Create Account 
+        </h1>
+
+        {msg && (
+          <p className="text-center text-sm mb-4 text-pink-600 font-semibold">
+            {msg}
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-pink-600 font-medium mb-1">
+              Username
+            </label>
+            <input
+              type="text"
+              name="username"
+              value={form.username}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg border border-pink-300 focus:ring-2 focus:ring-pink-400 outline-none"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-pink-600 font-medium mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg border border-pink-300 focus:ring-2 focus:ring-pink-400 outline-none"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-pink-600 font-medium mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg border border-pink-300 focus:ring-2 focus:ring-pink-400 outline-none"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg text-lg font-semibold transition-all shadow-md"
+          >
+            {loading ? "Creating..." : "Sign Up"}
+          </button>
+        </form>
+
+        <p className="mt-5 text-center text-gray-600">
+          Already have an account?{" "}
+          <Link to="/login" className="text-pink-600 font-semibold">
+            Login
+          </Link>
+        </p>
+      </div>
     </div>
   );
-};
-
-export default Signup;
+}
