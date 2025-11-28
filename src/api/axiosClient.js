@@ -1,9 +1,11 @@
+// src/api/axiosClient.js
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3001/api/v1",
+  baseURL: process.env.REACT_APP_API_BASE_URL || "http://localhost:3001/api/v1",
 });
 
+// If later you add JWT on backend, this will attach token automatically
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
