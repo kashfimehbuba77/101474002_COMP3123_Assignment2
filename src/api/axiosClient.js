@@ -2,8 +2,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || "http://localhost:3001/api/v1",
+  baseURL: "https://101474002-comp-3123-assignment01.vercel.app/api/v1",
 });
+
 
 // If later you add JWT on backend, this will attach token automatically
 api.interceptors.request.use((config) => {
