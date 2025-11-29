@@ -1,39 +1,32 @@
+// src/pages/Login.js
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axiosClient";
 
-export default function Login() {
+const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState("");
-  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const onChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
-  const handleSubmit = async (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
-    setMsg("");
-    setIsError(false);
-
     try {
       const res = await api.post("/user/login", form);
-      setMsg("✨ Login successful!");
-      setIsError(false);
-
-      // if you add token later:
-      // localStorage.setItem("token", res.data.token);
-
-      setTimeout(() => {
-        navigate("/employees");
-      }, 900);
+      // your backend may not send token yet, so just store dummy if missing
+      const token = res.data.jwt_token || "logged-in";
+      localStorage.setItem("token", token);
+      localStorage.setItem("userEmail", form.email);
+      navigate("/employees");
     } catch (err) {
-      setIsError(true);
-      setMsg(
-        err.response?.data?.message || "Unable to login. Please try again."
+      console.error(err);
+      setError(
+        err.response?.data?.message || "Invalid username or password."
       );
     } finally {
       setLoading(false);
@@ -41,73 +34,35 @@ export default function Login() {
   };
 
   return (
-    <div className="page-wrapper">
-      <div className="center-page">
-        <div className="vsco-card">
-          <h1 className="vsco-title">Welcome Back 💜</h1>
-          <p className="vsco-subtitle">
-            Log in to manage your employees in style.
-          </p>
-
-          {msg && (
-            <p
-              className={
-                "vsco-msg " + (isError ? "vsco-msg-error" : "vsco-msg-success")
-              }
-            >
-              {msg}
-            </p>
-          )}
-
-          <form className="vsco-form" onSubmit={handleSubmit}>
-            <div className="vsco-field">
-              <label className="vsco-label">Email</label>
-              <input
-                className="vsco-input"
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="vsco-field">
-              <label className="vsco-label">Password</label>
-              <input
-                className="vsco-input"
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <button
-              className="vsco-btn-primary"
-              type="submit"
-              disabled={loading}
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-          </form>
-
-          <p
-            style={{
-              marginTop: 16,
-              fontSize: 13,
-              textAlign: "center",
-              color: "#76618f",
-            }}
-          >
-            Don’t have an account?{" "}
-            <Link to="/signup" className="vsco-link">
-              Sign up here
-            </Link>
-          </p>
-        </div>
-      </div>
+    <div className="auth-container">
+      <h2>Login</h2>
+      <form onSubmit={onSubmit} className="auth-form">
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={onChange}
+          required
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={onChange}
+          required
+        />
+        {error && <p className="error-text">{error}</p>}
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </form>
+      <p style={{ marginTop: 8 }}>
+        Don't have an account? <Link to="/signup">Sign up</Link>
+      </p>
     </div>
   );
-}
+};
+
+export default Login;

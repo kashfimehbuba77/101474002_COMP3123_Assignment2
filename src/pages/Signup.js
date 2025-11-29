@@ -1,39 +1,32 @@
+// src/pages/Signup.js
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axiosClient";
 
-export default function Signup() {
+const Signup = () => {
   const [form, setForm] = useState({
     username: "",
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState("");
-  const [isError, setIsError] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const onChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
-  const handleSubmit = async (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
-    setMsg("");
-    setIsError(false);
-
     try {
       await api.post("/user/signup", form);
-      setMsg("🌸 Account created successfully!");
-      setIsError(false);
-      setTimeout(() => {
-        navigate("/login");
-      }, 900);
+      navigate("/login");
     } catch (err) {
-      setIsError(true);
-      setMsg(
-        err.response?.data?.message || "Unable to sign up. Please try again."
+      console.error(err);
+      setError(
+        err.response?.data?.message || "Signup failed. Please try again."
       );
     } finally {
       setLoading(false);
@@ -41,85 +34,42 @@ export default function Signup() {
   };
 
   return (
-    <div className="page-wrapper">
-      <div className="center-page">
-        <div className="vsco-card">
-          <h1 className="vsco-title">Join the Workspace 💫</h1>
-          <p className="vsco-subtitle">
-            Create an account to start managing employees.
-          </p>
-
-          {msg && (
-            <p
-              className={
-                "vsco-msg " + (isError ? "vsco-msg-error" : "vsco-msg-success")
-              }
-            >
-              {msg}
-            </p>
-          )}
-
-          <form className="vsco-form" onSubmit={handleSubmit}>
-            <div className="vsco-field">
-              <label className="vsco-label">Username</label>
-              <input
-                className="vsco-input"
-                type="text"
-                name="username"
-                value={form.username}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="vsco-field">
-              <label className="vsco-label">Email</label>
-              <input
-                className="vsco-input"
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="vsco-field">
-              <label className="vsco-label">Password</label>
-              <input
-                className="vsco-input"
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <button
-              className="vsco-btn-primary"
-              type="submit"
-              disabled={loading}
-            >
-              {loading ? "Creating account..." : "Sign Up"}
-            </button>
-          </form>
-
-          <p
-            style={{
-              marginTop: 16,
-              fontSize: 13,
-              textAlign: "center",
-              color: "#76618f",
-            }}
-          >
-            Already have an account?{" "}
-            <Link to="/login" className="vsco-link">
-              Log in
-            </Link>
-          </p>
-        </div>
-      </div>
+    <div className="auth-container">
+      <h2>Signup</h2>
+      <form onSubmit={onSubmit} className="auth-form">
+        <input
+          name="username"
+          placeholder="Username"
+          value={form.username}
+          onChange={onChange}
+          required
+        />
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={onChange}
+          required
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password (min 6 chars)"
+          value={form.password}
+          onChange={onChange}
+          required
+        />
+        {error && <p className="error-text">{error}</p>}
+        <button type="submit" disabled={loading}>
+          {loading ? "Creating..." : "Sign up"}
+        </button>
+      </form>
+      <p style={{ marginTop: 8 }}>
+        Already have an account? <Link to="/login">Login</Link>
+      </p>
     </div>
   );
-}
+};
+
+export default Signup;
