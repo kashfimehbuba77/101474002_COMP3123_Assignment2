@@ -1,7 +1,7 @@
 // src/pages/Employees.js
 import React, { useEffect, useState } from "react";
 import api from "../api/axiosClient";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavBar";
 
 export default function Employees() {
   const [employees, setEmployees] = useState([]);
