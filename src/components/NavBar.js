@@ -1,49 +1,22 @@
 // src/components/Navbar.js
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const Navbar = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userEmail");
-    navigate("/login");
-  };
-
+export default function Navbar() {
   return (
-    <nav
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        padding: "10px 20px",
-        backgroundColor: "#282c34",
-        color: "#fff",
-      }}
-    >
-      <div>
-        <Link to="/employees" style={{ color: "#61dafb", marginRight: 16 }}>
+    <header className="vsco-navbar">
+      <div className="vsco-logo">✨ EmployeeHub</div>
+      <nav className="vsco-nav-links">
+        <Link to="/employees" className="vsco-nav-link">
           Employees
         </Link>
-        <Link to="/employees/add" style={{ color: "#61dafb" }}>
+        <Link to="/employees/new" className="vsco-nav-link">
           Add Employee
         </Link>
-      </div>
-      <button
-        onClick={handleLogout}
-        style={{
-          background: "#ff4d4f",
-          border: "none",
-          padding: "6px 12px",
-          borderRadius: 4,
-          color: "#fff",
-          cursor: "pointer",
-        }}
-      >
-        Logout
-      </button>
-    </nav>
+        <Link to="/login" className="vsco-nav-link">
+          Logout
+        </Link>
+      </nav>
+    </header>
   );
-};
-
-export default Navbar;
+}
